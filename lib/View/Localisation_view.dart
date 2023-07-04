@@ -9,7 +9,7 @@ const accentCanvasColor = const Color(0xFF3E3E61);
 class PagesLocalisation extends StatelessWidget {
   const PagesLocalisation({Key? key}) : super(key: key);
 
-  static const pageTitle = 'Lieux';
+  static const pageTitle = 'Localisation';
   static const googleMapsUrl = 'https://www.google.com/maps/search/?api=1&query=St+Jean+Douai';
 
   void _openGoogleMaps(BuildContext context) async {
@@ -73,16 +73,16 @@ class PagesLocalisation extends StatelessWidget {
           ),
           Expanded(
             child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 16.0),
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: Colors.grey,
-                  width: 2.0,
+                  color: Colors.grey[300]!,
+                  width: 1.0,
                 ),
-                borderRadius: BorderRadius.circular(12.0),
+                borderRadius: BorderRadius.circular(8.0),
               ),
+              margin: const EdgeInsets.symmetric(horizontal: 16.0),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(12.0),
+                borderRadius: BorderRadius.circular(8.0),
                 child: FlutterMap(
                   options: MapOptions(
                     center: LatLng(50.369465744099635, 3.0860044668324575),
@@ -124,27 +124,120 @@ class PagesLocalisation extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(
-            height: 16.0,
+          SizedBox(height: 16.0),
+          FloatingActionButton.extended(
+            onPressed: () {
+              if (Theme.of(context).platform == TargetPlatform.android) {
+                _openGoogleMapsIntent(context);
+              } else {
+                _openGoogleMaps(context);
+              }
+            },
+            label: Text('Ouvrir dans Google Maps'),
+            icon: Icon(Icons.map),
+            backgroundColor: accentCanvasColor,
+          ),
+          SizedBox(height: 16.0),
+          Text(
+            'Nom station:',
+            style: TextStyle(
+              fontSize: 18.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 8.0),
+          Container(
+            width: double.infinity,
+            height: 40.0,
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Center(
+              child: Text(
+                'Valeur du nom de la station',
+                style: TextStyle(
+                  fontSize: 16.0,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 8.0),
+          Text(
+            'Nom carburant:',
+            style: TextStyle(
+              fontSize: 18.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 8.0),
+          Container(
+            width: double.infinity,
+            height: 40.0,
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Center(
+              child: Text(
+                'Valeur du nom du carburant',
+                style: TextStyle(
+                  fontSize: 16.0,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 8.0),
+          Text(
+            'Prix:',
+            style: TextStyle(
+              fontSize: 18.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 8.0),
+          Container(
+            width: double.infinity,
+            height: 40.0,
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Center(
+              child: Text(
+                'Valeur du prix',
+                style: TextStyle(
+                  fontSize: 16.0,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 8.0),
+          Text(
+            'Station lieux:',
+            style: TextStyle(
+              fontSize: 18.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 8.0),
+          Container(
+            width: double.infinity,
+            height: 40.0,
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Center(
+              child: Text(
+                'Valeur du lieu de la station',
+                style: TextStyle(
+                  fontSize: 16.0,
+                ),
+              ),
+            ),
           ),
         ],
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: Container(
-        width: MediaQuery.of(context).size.width * 0.8,
-        margin: EdgeInsets.only(bottom: 16.0),
-        child: FloatingActionButton.extended(
-          onPressed: () {
-            if (Theme.of(context).platform == TargetPlatform.android) {
-              _openGoogleMapsIntent(context);
-            } else {
-              _openGoogleMaps(context);
-            }
-          },
-          label: Text('Ouvrir dans Google Maps'),
-          icon: Icon(Icons.map),
-          backgroundColor: accentCanvasColor,
-        ),
       ),
     );
   }

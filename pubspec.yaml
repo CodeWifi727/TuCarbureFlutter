@@ -29,11 +29,11 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  url_launcher: ^6.0.3
+  url_launcher: ^6.1.11
   android_intent_plus: ^4.0.1
-  flutter_map: ^4.0.0
-  http: ^0.13.4
-  latlong2: ^0.8.1
+  flutter_map: ^5.0.0
+  http: ^1.1.0
+  latlong2: ^0.9.0
   flutter:
     sdk: flutter
 
