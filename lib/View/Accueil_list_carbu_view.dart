@@ -15,7 +15,7 @@ class PageAccueil extends StatefulWidget {
 class _PageAccueilState extends State<PageAccueil> {
   ScrollController _scrollController = ScrollController();
   List<Releve> releves = [];
-  List<Station> favoris = [];
+  Set<Station> favoris = Set<Station>();
   bool isLoading = false;
   bool reachedEnd = false;
 
@@ -83,8 +83,30 @@ class _PageAccueilState extends State<PageAccueil> {
     );
   }
 
+  List<Releve> _buildFavorisFirstList() {
+    List<Releve> favorisFirst = [];
+
+    // Ajoute les relevés correspondant aux favoris en premier dans la liste
+    for (Releve releve in releves) {
+      if (favoris.contains(releve.station)) {
+        favorisFirst.add(releve);
+      }
+    }
+
+    // Ajoute les autres relevés dans la liste
+    for (Releve releve in releves) {
+      if (!favoris.contains(releve.station)) {
+        favorisFirst.add(releve);
+      }
+    }
+
+    return favorisFirst;
+  }
+
   @override
   Widget build(BuildContext context) {
+    List<Releve> favorisFirst = _buildFavorisFirstList();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFF3E3E61),
@@ -109,10 +131,10 @@ class _PageAccueilState extends State<PageAccueil> {
       ),
       body: ListView.builder(
         controller: _scrollController,
-        itemCount: releves.length + 1,
+        itemCount: favorisFirst.length + 1,
         itemBuilder: (context, index) {
-          if (index < releves.length) {
-            Releve releve = releves[index];
+          if (index < favorisFirst.length) {
+            Releve releve = favorisFirst[index];
             bool isFavori = favoris.contains(releve.station);
 
             return GestureDetector(
@@ -213,8 +235,10 @@ class _PageAccueilState extends State<PageAccueil> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            ListFavorisView(favoris: favoris, removeFavori: _toggleFavori),
+                        builder: (context) => ListFavorisView(
+                          favoris: favoris.toList(),
+                          removeFavori: _toggleFavori,
+                        ),
                       ),
                     );
                   },
