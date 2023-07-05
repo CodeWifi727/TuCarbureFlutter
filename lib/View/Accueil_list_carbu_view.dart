@@ -14,8 +14,8 @@ class PageAccueil extends StatefulWidget {
 
 class _PageAccueilState extends State<PageAccueil> {
   ScrollController _scrollController = ScrollController();
-  List<InfoStation> InfoStations = [];
-  List<InfoStation> favoris = [];
+  List<Releve> releves = [];
+  List<Station> favoris = [];
   bool isLoading = false;
   bool reachedEnd = false;
 
@@ -25,7 +25,7 @@ class _PageAccueilState extends State<PageAccueil> {
   void initState() {
     super.initState();
     _scrollController.addListener(_loadMoreItems);
-    _fetchInfoStations();
+    _fetchReleves();
   }
 
   @override
@@ -41,21 +41,21 @@ class _PageAccueilState extends State<PageAccueil> {
         !reachedEnd) {
       // Utilisez le délai pour éviter les appels redondants
       Timer(Duration(milliseconds: 200), () {
-        _fetchInfoStations();
+        _fetchReleves();
       });
     }
   }
 
-  Future<void> _fetchInfoStations() async {
+  Future<void> _fetchReleves() async {
     setState(() {
       isLoading = true;
     });
 
     try {
-      List<InfoStation> fetchInfoStations = await _apiService.fetchInfoStations();
+      List<Releve> fetchReleves = await _apiService.fetchReleves();
 
       setState(() {
-        InfoStations.addAll(fetchInfoStations);
+        releves.addAll(fetchReleves);
         isLoading = false;
       });
     } catch (e) {
@@ -66,7 +66,7 @@ class _PageAccueilState extends State<PageAccueil> {
     }
   }
 
-  void _toggleFavori(InfoStation favori) {
+  void _toggleFavori(Station favori) {
     setState(() {
       if (favoris.contains(favori)) {
         favoris.remove(favori);
@@ -109,11 +109,11 @@ class _PageAccueilState extends State<PageAccueil> {
       ),
       body: ListView.builder(
         controller: _scrollController,
-        itemCount: InfoStations.length + 1,
+        itemCount: releves.length + 1,
         itemBuilder: (context, index) {
-          if (index < InfoStations.length) {
-            InfoStation infoStation = InfoStations[index];
-            bool isFavori = favoris.contains(infoStation);
+          if (index < releves.length) {
+            Releve releve = releves[index];
+            bool isFavori = favoris.contains(releve.station);
 
             return GestureDetector(
               onTap: _navigateToPageLocalisation,
@@ -149,7 +149,7 @@ class _PageAccueilState extends State<PageAccueil> {
                         children: [
                           SizedBox(height: 8.0),
                           Text(
-                            infoStation.marque,
+                            releve.station.marque,
                             style: TextStyle(
                               fontSize: 16.0,
                               color: Colors.grey,
@@ -157,14 +157,14 @@ class _PageAccueilState extends State<PageAccueil> {
                           ),
                           SizedBox(height: 8.0),
                           Text(
-                            infoStation.ville,
+                            releve.station.ville,
                             style: TextStyle(
                               fontSize: 16.0,
                             ),
                           ),
                           SizedBox(height: 8.0),
                           Text(
-                            infoStation.adressePostale,
+                            releve.station.adressePostale,
                             style: TextStyle(
                               fontSize: 16.0,
                             ),
@@ -174,7 +174,7 @@ class _PageAccueilState extends State<PageAccueil> {
                     ),
                     IconButton(
                       onPressed: () {
-                        _toggleFavori(infoStation);
+                        _toggleFavori(releve.station);
                       },
                       icon: Icon(
                         isFavori ? Icons.star : Icons.star_border,

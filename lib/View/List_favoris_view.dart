@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:tucarbure/ViewModel/InfoCarbu_view_model.dart';
 
 class ListFavorisView extends StatefulWidget {
-  final List<InfoStation> favoris;
-  final Function(InfoStation) removeFavori;
+  final List<Station> favoris;
+  final Function(Station) removeFavori;
 
   ListFavorisView({required this.favoris, required this.removeFavori});
 
@@ -48,7 +48,7 @@ class _ListFavorisViewState extends State<ListFavorisView> {
       body: ListView.builder(
         itemCount: widget.favoris.length,
         itemBuilder: (context, index) {
-          InfoStation favori = widget.favoris[index];
+          Station favori = widget.favoris[index];
 
           return Container(
             margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
@@ -80,13 +80,6 @@ class _ListFavorisViewState extends State<ListFavorisView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'ca marche',
-                        style: TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
                       SizedBox(height: 8.0),
                       Text(
                         favori.marque,
