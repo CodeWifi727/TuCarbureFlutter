@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:tucarbure/ViewModel/InfoCarbu_view_model.dart';
 import 'package:tucarbure/View/List_favoris_view.dart';
+import 'package:tucarbure/View/Localisation_view.dart';
 
 const accentCanvasColor = const Color(0xFF3E3E61);
 const pageTitle = 'Accueil';
@@ -13,7 +14,8 @@ class PageAccueil extends StatefulWidget {
 
 class _PageAccueilState extends State<PageAccueil> {
   ScrollController _scrollController = ScrollController();
-  List<Actualite> actualites = [];
+  List<InfoStation> InfoStations = [];
+  List<InfoStation> favoris = [];
   bool isLoading = false;
   bool reachedEnd = false;
 
@@ -23,7 +25,7 @@ class _PageAccueilState extends State<PageAccueil> {
   void initState() {
     super.initState();
     _scrollController.addListener(_loadMoreItems);
-    _fetchActualites();
+    _fetchInfoStations();
   }
 
   @override
@@ -39,21 +41,21 @@ class _PageAccueilState extends State<PageAccueil> {
         !reachedEnd) {
       // Utilisez le délai pour éviter les appels redondants
       Timer(Duration(milliseconds: 200), () {
-        _fetchActualites();
+        _fetchInfoStations();
       });
     }
   }
 
-  Future<void> _fetchActualites() async {
+  Future<void> _fetchInfoStations() async {
     setState(() {
       isLoading = true;
     });
 
     try {
-      List<Actualite> fetchedActualites = await _apiService.fetchActualites();
+      List<InfoStation> fetchInfoStations = await _apiService.fetchInfoStations();
 
       setState(() {
-        actualites.addAll(fetchedActualites);
+        InfoStations.addAll(fetchInfoStations);
         isLoading = false;
       });
     } catch (e) {
@@ -62,6 +64,23 @@ class _PageAccueilState extends State<PageAccueil> {
         isLoading = false;
       });
     }
+  }
+
+  void _toggleFavori(InfoStation favori) {
+    setState(() {
+      if (favoris.contains(favori)) {
+        favoris.remove(favori);
+      } else {
+        favoris.add(favori);
+      }
+    });
+  }
+
+  void _navigateToPageLocalisation() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => PagesLocalisation()),
+    );
   }
 
   @override
@@ -90,65 +109,80 @@ class _PageAccueilState extends State<PageAccueil> {
       ),
       body: ListView.builder(
         controller: _scrollController,
-        itemCount: actualites.length + 1,
+        itemCount: InfoStations.length + 1,
         itemBuilder: (context, index) {
-          if (index < actualites.length) {
-            return Container(
-              margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-              padding: EdgeInsets.all(10.0),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 2,
-                    blurRadius: 5,
-                    offset: Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 100.0,
-                    height: 100.0,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8.0),
+          if (index < InfoStations.length) {
+            InfoStation infoStation = InfoStations[index];
+            bool isFavori = favoris.contains(infoStation);
+
+            return GestureDetector(
+              onTap: _navigateToPageLocalisation,
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                padding: EdgeInsets.all(10.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 2,
+                      blurRadius: 5,
+                      offset: Offset(0, 3),
                     ),
-                  ),
-                  SizedBox(width: 10.0),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Titre de l\'actualité',
-                          style: TextStyle(
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 8.0),
-                        Text(
-                          'Date de l\'actualité',
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        SizedBox(height: 8.0),
-                        Text(
-                          'Description de l\'actualité',
-                          style: TextStyle(
-                            fontSize: 16.0,
-                          ),
-                        ),
-                      ],
+                  ],
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 100.0,
+                      height: 100.0,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
                     ),
-                  ),
-                ],
+                    SizedBox(width: 10.0),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 8.0),
+                          Text(
+                            infoStation.marque,
+                            style: TextStyle(
+                              fontSize: 16.0,
+                              color: Colors.grey,
+                            ),
+                          ),
+                          SizedBox(height: 8.0),
+                          Text(
+                            infoStation.ville,
+                            style: TextStyle(
+                              fontSize: 16.0,
+                            ),
+                          ),
+                          SizedBox(height: 8.0),
+                          Text(
+                            infoStation.adressePostale,
+                            style: TextStyle(
+                              fontSize: 16.0,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        _toggleFavori(infoStation);
+                      },
+                      icon: Icon(
+                        isFavori ? Icons.star : Icons.star_border,
+                        color: isFavori ? Colors.yellow : Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             );
           } else if (isLoading) {
@@ -178,7 +212,10 @@ class _PageAccueilState extends State<PageAccueil> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => PageFavoris()), // Redirection vers PageFavoris
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            ListFavorisView(favoris: favoris, removeFavori: _toggleFavori),
+                      ),
                     );
                   },
                   borderRadius: BorderRadius.circular(10.0),

@@ -164,6 +164,31 @@ class PagesLocalisation extends StatelessWidget {
           ),
           SizedBox(height: 8.0),
           Text(
+            'Station lieux:',
+            style: TextStyle(
+              fontSize: 18.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 8.0),
+          Container(
+            width: double.infinity,
+            height: 40.0,
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Center(
+              child: Text(
+                'Valeur du lieu de la station',
+                style: TextStyle(
+                  fontSize: 16.0,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 8.0),
+          Text(
             'Nom carburant:',
             style: TextStyle(
               fontSize: 18.0,
@@ -212,31 +237,7 @@ class PagesLocalisation extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 8.0),
-          Text(
-            'Station lieux:',
-            style: TextStyle(
-              fontSize: 18.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height: 8.0),
-          Container(
-            width: double.infinity,
-            height: 40.0,
-            decoration: BoxDecoration(
-              color: Colors.grey[200],
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            child: Center(
-              child: Text(
-                'Valeur du lieu de la station',
-                style: TextStyle(
-                  fontSize: 16.0,
-                ),
-              ),
-            ),
-          ),
+
         ],
       ),
     );

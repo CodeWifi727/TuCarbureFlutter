@@ -1,40 +1,54 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:http/io_client.dart' as http_io;
 
 class ApiService {
-  static const String apiUrl = 'http://192.168.187.93:8000/api/actualites'; // Remplace cette URL par celle de ton API Symfony
+  static const String apiUrl = 'https://192.168.1.23:7033/Station';
 
-  Future<List<Actualite>> fetchActualites() async {
-    final response = await http.get(Uri.parse('$apiUrl')); // Endpoint pour récupérer les actualités
+  Future<List<InfoStation>> fetchInfoStations() async {
+    // Créer un client HTTP en désactivant la vérification du certificat
+    http.Client client = http_io.IOClient(
+      HttpClient()..badCertificateCallback = (cert, host, port) => true,
+    );
+
+    final response = await client.get(Uri.parse(apiUrl));
 
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
-      return List<Actualite>.from(jsonData.map((data) => Actualite.fromJson(data)));
+      return List<InfoStation>.from(
+          jsonData.map((data) => InfoStation.fromJson(data)));
     } else {
-      throw Exception('Failed to fetch actualites from API');
+      throw Exception('Failed to fetch InfoCarbu from API');
     }
   }
 }
 
-class Actualite {
-  final String titre;
-  final String description;
-  final String image;
-  final DateTime date;
+class InfoStation {
+  final int idStationsService;
+  final String marque;
+  final String adressePostale;
+  final String longitude;
+  final String latitude;
+  final String ville;
 
-  Actualite({
-    required this.titre,
-    required this.description,
-    required this.image,
-    required this.date,
+  InfoStation({
+    required this.idStationsService,
+    required this.marque,
+    required this.adressePostale,
+    required this.longitude,
+    required this.latitude,
+    required this.ville,
   });
 
-  factory Actualite.fromJson(Map<String, dynamic> json) {
-    return Actualite(
-      titre: json['titre'],
-      description: json['description'],
-      image: json['image'],
-      date: DateTime.parse(json['date']),
+  factory InfoStation.fromJson(Map<String, dynamic> json) {
+    return InfoStation(
+      idStationsService: json['idStationsService'],
+      marque: json['marque'],
+      adressePostale: json['adressePostale'],
+      longitude: json['longitude'],
+      latitude: json['latitude'],
+      ville: json['ville'],
     );
   }
 }
