@@ -103,13 +103,89 @@ class _PageAccueilState extends State<PageAccueil> {
     return favorisFirst;
   }
 
+  void _showPriceModificationPopup() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Modifier le prix',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 16.0),
+                TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Nouveau prix',
+                    labelStyle: TextStyle(color: Colors.black),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: accentCanvasColor),
+                    ),
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+                SizedBox(height: 16.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      child: Text(
+                        'Annuler',
+                        style: TextStyle(color: accentCanvasColor),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    SizedBox(width: 8.0),
+                    ElevatedButton(
+                      child: Text(
+                        'Valider',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        primary: accentCanvasColor,
+                        onPrimary: Colors.white,
+                      ),
+                      onPressed: () {
+                        // TODO: Effectuer la modification du prix
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     List<Releve> favorisFirst = _buildFavorisFirstList();
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFF3E3E61),
+        backgroundColor: accentCanvasColor,
         title: Row(
           children: [
             Icon(
@@ -124,6 +200,7 @@ class _PageAccueilState extends State<PageAccueil> {
                   color: Colors.white,
                   fontSize: 20.0,
                 ),
+                textAlign: TextAlign.left,
               ),
             ),
           ],
@@ -158,13 +235,12 @@ class _PageAccueilState extends State<PageAccueil> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      width: 100.0,
-                      height: 100.0,
+                      width: 15.0,
+                      height: 15.0,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
                     ),
-                    SizedBox(width: 10.0),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -176,6 +252,7 @@ class _PageAccueilState extends State<PageAccueil> {
                               fontSize: 16.0,
                               color: Colors.grey,
                             ),
+                            textAlign: TextAlign.left,
                           ),
                           SizedBox(height: 8.0),
                           Text(
@@ -183,6 +260,7 @@ class _PageAccueilState extends State<PageAccueil> {
                             style: TextStyle(
                               fontSize: 16.0,
                             ),
+                            textAlign: TextAlign.left,
                           ),
                           SizedBox(height: 8.0),
                           Text(
@@ -190,6 +268,7 @@ class _PageAccueilState extends State<PageAccueil> {
                             style: TextStyle(
                               fontSize: 16.0,
                             ),
+                            textAlign: TextAlign.left,
                           ),
                         ],
                       ),
@@ -202,6 +281,12 @@ class _PageAccueilState extends State<PageAccueil> {
                         isFavori ? Icons.star : Icons.star_border,
                         color: isFavori ? Colors.yellow : Colors.grey,
                       ),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        _showPriceModificationPopup();
+                      },
+                      icon: Icon(Icons.edit),
                     ),
                   ],
                 ),
@@ -222,7 +307,7 @@ class _PageAccueilState extends State<PageAccueil> {
         },
       ),
       bottomNavigationBar: BottomAppBar(
-        color: Color(0xFF3E3E61),
+        color: accentCanvasColor,
         child: Container(
           height: 60.0,
           padding: EdgeInsets.symmetric(horizontal: 110.0),

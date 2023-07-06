@@ -69,8 +69,8 @@ class _ListFavorisViewState extends State<ListFavorisView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  width: 100.0,
-                  height: 100.0,
+                  width: 15.0,
+                  height: 15.0,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
