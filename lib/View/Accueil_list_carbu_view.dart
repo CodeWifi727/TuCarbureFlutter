@@ -18,7 +18,7 @@ class _PageAccueilState extends State<PageAccueil> {
   Set<Station> favoris = Set<Station>();
   bool isLoading = false;
   bool reachedEnd = false;
-  String _selectedFuel = 'Tous'; // Added selected fuel variable
+  String _selectedFuel = "tous"; // Added selected fuel variable
 
   ApiService _apiService = ApiService();
 
@@ -89,7 +89,7 @@ class _PageAccueilState extends State<PageAccueil> {
 
     // Filter the releves list based on the selected fuel
     List<Releve> filteredReleves = releves.where((releve) {
-      if (_selectedFuel == 'Tous') {
+      if (_selectedFuel == "tous") {
         return true; // Include all items when 'Tous' is selected
       } else {
         return releve.carburant.nom == _selectedFuel;
@@ -112,6 +112,16 @@ class _PageAccueilState extends State<PageAccueil> {
 
     return favorisFirst;
   }
+
+List<String> _getUniqueFuelTypes() {
+  Set<String> uniqueFuelTypes = Set<String>();
+  for (Releve releve in releves) {
+    uniqueFuelTypes.add(releve.carburant.nom);
+  }
+  uniqueFuelTypes.add("tous");
+  return uniqueFuelTypes.toList();
+}
+
 
 void _showPriceModificationPopup() {
     showDialog(
@@ -192,6 +202,9 @@ void _showPriceModificationPopup() {
   @override
   Widget build(BuildContext context) {
     List<Releve> favorisFirst = _buildFavorisFirstList();
+    //if (releves == []) {
+    //   return Scaffold();
+    // }else{
 
     return Scaffold(
       appBar: AppBar(
@@ -229,13 +242,7 @@ void _showPriceModificationPopup() {
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
                 value: _selectedFuel,
-                items: <String>[
-                  'Tous',
-                  'Sans Plomb 98',
-                  'Sans Plomb 95',
-                  'Gazole',
-                  'Diesel'
-                ].map((String value) {
+                items: _getUniqueFuelTypes().map((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(
@@ -416,5 +423,6 @@ void _showPriceModificationPopup() {
         ),
       ),
     );
-  }
+    }
+  //}
 }
