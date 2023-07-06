@@ -18,6 +18,7 @@ class _PageAccueilState extends State<PageAccueil> {
   Set<Station> favoris = Set<Station>();
   bool isLoading = false;
   bool reachedEnd = false;
+  String _selectedFuel = 'Tous'; // Added selected fuel variable
 
   ApiService _apiService = ApiService();
 
@@ -36,7 +37,7 @@ class _PageAccueilState extends State<PageAccueil> {
 
   void _loadMoreItems() {
     if (_scrollController.position.pixels ==
-        _scrollController.position.maxScrollExtent &&
+            _scrollController.position.maxScrollExtent &&
         !isLoading &&
         !reachedEnd) {
       // Utilisez le délai pour éviter les appels redondants
@@ -86,15 +87,24 @@ class _PageAccueilState extends State<PageAccueil> {
   List<Releve> _buildFavorisFirstList() {
     List<Releve> favorisFirst = [];
 
-    // Ajoute les relevés correspondant aux favoris en premier dans la liste
-    for (Releve releve in releves) {
+    // Filter the releves list based on the selected fuel
+    List<Releve> filteredReleves = releves.where((releve) {
+      if (_selectedFuel == 'Tous') {
+        return true; // Include all items when 'Tous' is selected
+      } else {
+        return releve.carburant.nom == _selectedFuel;
+      }
+    }).toList();
+
+    // Add the relevés corresponding to the favoris first in the list
+    for (Releve releve in filteredReleves) {
       if (favoris.contains(releve.station)) {
         favorisFirst.add(releve);
       }
     }
 
-    // Ajoute les autres relevés dans la liste
-    for (Releve releve in releves) {
+    // Add the other relevés to the list
+    for (Releve releve in filteredReleves) {
       if (!favoris.contains(releve.station)) {
         favorisFirst.add(releve);
       }
@@ -103,7 +113,7 @@ class _PageAccueilState extends State<PageAccueil> {
     return favorisFirst;
   }
 
-  void _showPriceModificationPopup() {
+void _showPriceModificationPopup() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -206,105 +216,145 @@ class _PageAccueilState extends State<PageAccueil> {
           ],
         ),
       ),
-      body: ListView.builder(
-        controller: _scrollController,
-        itemCount: favorisFirst.length + 1,
-        itemBuilder: (context, index) {
-          if (index < favorisFirst.length) {
-            Releve releve = favorisFirst[index];
-            bool isFavori = favoris.contains(releve.station);
-
-            return GestureDetector(
-              onTap: _navigateToPageLocalisation,
-              child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-                padding: EdgeInsets.all(10.0),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10.0),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: Offset(0, 3),
+      body: ListView(
+        children: [
+          Container(
+            margin: EdgeInsets.all(10),
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: Color(0xFF001931)),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                value: _selectedFuel,
+                items: <String>[
+                  'Tous',
+                  'Sans Plomb 98 (E5)',
+                  'Sans Plomb 95 (E5)',
+                  'Sans Plomb 95 (E10)',
+                  'Gazole (B7)',
+                  'Diesel'
+                ].map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(
+                      value,
+                      style: TextStyle(color: Color(0xFF001931)),
                     ),
-                  ],
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: 15.0,
-                      height: 15.0,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(height: 8.0),
-                          Text(
-                            releve.station.marque,
-                            style: TextStyle(
-                              fontSize: 16.0,
-                              color: Colors.grey,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                          SizedBox(height: 8.0),
-                          Text(
-                            releve.station.ville,
-                            style: TextStyle(
-                              fontSize: 16.0,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                          SizedBox(height: 8.0),
-                          Text(
-                            releve.station.adressePostale,
-                            style: TextStyle(
-                              fontSize: 16.0,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                        ],
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        _toggleFavori(releve.station);
-                      },
-                      icon: Icon(
-                        isFavori ? Icons.star : Icons.star_border,
-                        color: isFavori ? Colors.yellow : Colors.grey,
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        _showPriceModificationPopup();
-                      },
-                      icon: Icon(Icons.edit),
-                    ),
-                  ],
-                ),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedFuel = newValue!;
+                  });
+                },
               ),
-            );
-          } else if (isLoading) {
-            return Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Center(child: CircularProgressIndicator()),
-            );
-          } else {
-            reachedEnd = true;
-            return Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Center(child: Text('Fin des actualités')),
-            );
-          }
-        },
+            ),
+          ),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: favorisFirst.length+ 1,
+            itemBuilder: (context, index) {
+              if (index < favorisFirst.length) {
+                Releve releve = favorisFirst[index];
+                bool isFavori = favoris.contains(releve.station);
+
+                return GestureDetector(
+                  onTap: _navigateToPageLocalisation,
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                    padding: EdgeInsets.all(10.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 2,
+                          blurRadius: 5,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 15.0,
+                          height: 15.0,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(height: 8.0),
+                              Text(
+                                releve.station.marque,
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                  color: Colors.grey,
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                              SizedBox(height: 8.0),
+                              Text(
+                                releve.station.ville,
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                              SizedBox(height: 8.0),
+                              Text(
+                                releve.station.adressePostale,
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            _toggleFavori(releve.station);
+                          },
+                          icon: Icon(
+                            isFavori ? Icons.star : Icons.star_border,
+                            color: isFavori ? Colors.yellow : Colors.grey,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            _showPriceModificationPopup();
+                          },
+                          icon: Icon(Icons.edit),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              } else if (isLoading) {
+                return Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              } else {
+                reachedEnd = true;
+                return Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Center(child: Text('Fin des actualités')),
+                );
+              }
+            },
+          ),
+        ],
       ),
       bottomNavigationBar: BottomAppBar(
         color: accentCanvasColor,
@@ -340,8 +390,7 @@ class _PageAccueilState extends State<PageAccueil> {
                           spreadRadius: 2,
                           blurRadius: 5,
                           offset: Offset(0, 3),
-                        ),
-                      ],
+                    )],
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
