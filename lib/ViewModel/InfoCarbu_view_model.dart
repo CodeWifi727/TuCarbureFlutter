@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart' as http_io;
 
 class ApiService {
-  static const String apiUrl = 'https://192.168.1.22:7033/Releve';
+  static const String apiUrl = 'https://192.168.1.22:7033';
 
   Future<List<Releve>> fetchReleves() async {
     // Créer un client HTTP en désactivant la vérification du certificat
