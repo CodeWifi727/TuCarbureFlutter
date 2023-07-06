@@ -231,10 +231,9 @@ void _showPriceModificationPopup() {
                 value: _selectedFuel,
                 items: <String>[
                   'Tous',
-                  'Sans Plomb 98 (E5)',
-                  'Sans Plomb 95 (E5)',
-                  'Sans Plomb 95 (E10)',
-                  'Gazole (B7)',
+                  'Sans Plomb 98',
+                  'Sans Plomb 95',
+                  'Gazole',
                   'Diesel'
                 ].map((String value) {
                   return DropdownMenuItem<String>(
