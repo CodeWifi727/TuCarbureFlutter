@@ -77,10 +77,10 @@ class _PageAccueilState extends State<PageAccueil> {
     });
   }
 
-  void _navigateToPageLocalisation(station) {
+  void _navigateToPageLocalisation(station, releves) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => PagesLocalisation(stations: station)),
+      MaterialPageRoute(builder: (context) => PagesLocalisation(stations: station, releves: releves,)),
     );
   }
 
@@ -216,7 +216,7 @@ class _PageAccueilState extends State<PageAccueil> {
             bool isFavori = favoris.contains(releve.station);
 
             return GestureDetector(
-              onTap:()=> _navigateToPageLocalisation(releve.station),
+              onTap:()=> _navigateToPageLocalisation(releve.station, releves),
               child: Container(
                 margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
                 padding: EdgeInsets.all(10.0),

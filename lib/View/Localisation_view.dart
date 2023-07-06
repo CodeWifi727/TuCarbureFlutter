@@ -10,10 +10,10 @@ const accentCanvasColor = const Color(0xFF3E3E61);
 
 class PagesLocalisation extends StatelessWidget {
   final Station stations;
-  const PagesLocalisation({Key? key, required this.stations}) : super(key: key);
+  final List<Releve> releves;
+
+  const PagesLocalisation({Key? key, required this.stations, required this.releves}) : super(key: key);
   static const pageTitle = 'Localisation';
-
-
 
   void _openGoogleMaps(BuildContext context, String googleMapsUrl) async {
     print(googleMapsUrl);
@@ -91,7 +91,7 @@ class PagesLocalisation extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8.0),
                 child: FlutterMap(
                   options: MapOptions(
-                    center: LatLng(stations.longitude,stations.latitude),
+                    center: LatLng(stations.longitude, stations.latitude),
                     zoom: 17.50,
                   ),
                   children: [
@@ -121,7 +121,7 @@ class PagesLocalisation extends StatelessWidget {
                       attributions: [
                         TextSourceAttribution(
                           'OpenStreetMap contributors',
-                          onTap: () => launch('https://openstreetmap.org/copyright'),
+                          onTap: () => launch('httpsopenstreetmap.org/copyright'),
                         ),
                       ],
                     ),
@@ -194,56 +194,38 @@ class PagesLocalisation extends StatelessWidget {
             ),
           ),
           SizedBox(height: 8.0),
-          Text(
-            'Nom carburant:',
-            style: TextStyle(
-              fontSize: 18.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height: 8.0),
-          Container(
-            width: double.infinity,
-            height: 40.0,
-            decoration: BoxDecoration(
-              color: Colors.grey[200],
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            child: Center(
-              child: Text(
-                'Valeur du nom du carburant',
-                style: TextStyle(
-                  fontSize: 16.0,
-                ),
+          Expanded(
+            flex: 1,
+            child: Card(
+              child: ListView.builder(
+                primary: false,
+                itemCount: releves.length,
+                itemBuilder: (context, index) {
+                  final releve = releves[index];
+                    return Material(
+                      color: Colors.white,
+                      child: Container(
+                        padding: EdgeInsets.all(8.0),
+                        child: ListTile(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          tileColor: Colors.grey[200],
+                          title: Text(
+                            releve.carburant.nom,
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          subtitle: Text(
+                            '${releve.prixCarburant.toStringAsFixed(2)} €',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                      ),
+                    );
+                },
               ),
             ),
           ),
-          SizedBox(height: 8.0),
-          Text(
-            'Prix:',
-            style: TextStyle(
-              fontSize: 18.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height: 8.0),
-          Container(
-            width: double.infinity,
-            height: 40.0,
-            decoration: BoxDecoration(
-              color: Colors.grey[200],
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            child: Center(
-              child: Text(
-                'Valeur du prix',
-                style: TextStyle(
-                  fontSize: 16.0,
-                ),
-              ),
-            ),
-          ),
-
         ],
       ),
     );
