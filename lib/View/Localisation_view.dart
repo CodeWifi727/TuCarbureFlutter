@@ -4,18 +4,21 @@ import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:android_intent_plus/android_intent.dart';
 
+import '../ViewModel/InfoCarbu_view_model.dart';
+
 const accentCanvasColor = const Color(0xFF3E3E61);
 
 class PagesLocalisation extends StatelessWidget {
-  const PagesLocalisation({Key? key}) : super(key: key);
-
+  final Station stations;
+  const PagesLocalisation({Key? key, required this.stations}) : super(key: key);
   static const pageTitle = 'Localisation';
-  static const googleMapsUrl = 'https://www.google.com/maps/search/?api=1&query=St+Jean+Douai';
 
-  void _openGoogleMaps(BuildContext context) async {
-    final url = 'https://www.google.com/maps/search/?api=1&query=St+Jean+Douai';
-    if (await canLaunch(url)) {
-      await launch(url);
+
+
+  void _openGoogleMaps(BuildContext context, String googleMapsUrl) async {
+    print(googleMapsUrl);
+    if (await canLaunch(googleMapsUrl)) {
+      await launch(googleMapsUrl);
     } else {
       showDialog(
         context: context,
@@ -33,7 +36,8 @@ class PagesLocalisation extends StatelessWidget {
     }
   }
 
-  void _openGoogleMapsIntent(BuildContext context) {
+  void _openGoogleMapsIntent(BuildContext context, String googleMapsUrl) {
+    print(googleMapsUrl);
     final intent = AndroidIntent(
       action: 'action_view',
       data: Uri.parse(googleMapsUrl).toString(),
@@ -44,6 +48,8 @@ class PagesLocalisation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String googleMapsUrl = 'https://www.google.com/maps/search/?api=1&query=${stations.longitude}%2C${stations.latitude}';
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: accentCanvasColor,
@@ -85,7 +91,7 @@ class PagesLocalisation extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8.0),
                 child: FlutterMap(
                   options: MapOptions(
-                    center: LatLng(50.369465744099635, 3.0860044668324575),
+                    center: LatLng(stations.longitude,stations.latitude),
                     zoom: 17.50,
                   ),
                   children: [
@@ -98,7 +104,7 @@ class PagesLocalisation extends StatelessWidget {
                         Marker(
                           width: 80.0,
                           height: 80.0,
-                          point: LatLng(50.369465744099635, 3.0860044668324575),
+                          point: LatLng(stations.longitude, stations.latitude),
                           builder: (ctx) => Container(
                             child: Icon(
                               Icons.location_pin,
@@ -128,9 +134,9 @@ class PagesLocalisation extends StatelessWidget {
           FloatingActionButton.extended(
             onPressed: () {
               if (Theme.of(context).platform == TargetPlatform.android) {
-                _openGoogleMapsIntent(context);
+                _openGoogleMapsIntent(context, googleMapsUrl);
               } else {
-                _openGoogleMaps(context);
+                _openGoogleMaps(context, googleMapsUrl);
               }
             },
             label: Text('Ouvrir dans Google Maps'),
@@ -155,7 +161,7 @@ class PagesLocalisation extends StatelessWidget {
             ),
             child: Center(
               child: Text(
-                'Valeur du nom de la station',
+                stations.marque,
                 style: TextStyle(
                   fontSize: 16.0,
                 ),
@@ -180,7 +186,7 @@ class PagesLocalisation extends StatelessWidget {
             ),
             child: Center(
               child: Text(
-                'Valeur du lieu de la station',
+                stations.adressePostale,
                 style: TextStyle(
                   fontSize: 16.0,
                 ),
