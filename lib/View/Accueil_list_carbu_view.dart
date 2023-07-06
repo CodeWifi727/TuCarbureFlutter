@@ -15,6 +15,7 @@ class PageAccueil extends StatefulWidget {
 class _PageAccueilState extends State<PageAccueil> {
   ScrollController _scrollController = ScrollController();
   List<Releve> releves = [];
+
   Set<Station> favoris = Set<Station>();
   bool isLoading = false;
   bool reachedEnd = false;
@@ -76,10 +77,10 @@ class _PageAccueilState extends State<PageAccueil> {
     });
   }
 
-  void _navigateToPageLocalisation() {
+  void _navigateToPageLocalisation(station) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => PagesLocalisation()),
+      MaterialPageRoute(builder: (context) => PagesLocalisation(stations: station)),
     );
   }
 
@@ -215,7 +216,7 @@ class _PageAccueilState extends State<PageAccueil> {
             bool isFavori = favoris.contains(releve.station);
 
             return GestureDetector(
-              onTap: _navigateToPageLocalisation,
+              onTap:()=> _navigateToPageLocalisation(releve.station),
               child: Container(
                 margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
                 padding: EdgeInsets.all(10.0),
