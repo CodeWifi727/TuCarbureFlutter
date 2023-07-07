@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:tucarbure/ViewModel/InfoCarbu_view_model.dart';
 import 'package:tucarbure/View/List_favoris_view.dart';
 import 'package:tucarbure/View/Localisation_view.dart';
@@ -78,10 +79,10 @@ class _PageAccueilState extends State<PageAccueil> {
     });
   }
 
-  void _navigateToPageLocalisation(station, releves) {
+  void _navigateToPageLocalisation(station) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => PagesLocalisation(stations: station, releves: releves,)),
+        MaterialPageRoute(builder: (context) => PagesLocalisation(stations: station, releves: releves,)),
     );
   }
 
@@ -199,12 +200,85 @@ class _PageAccueilState extends State<PageAccueil> {
     );
   }
 
+  void _showLocationPopup(Position position) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Localisation',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 16.0),
+                Text(
+                  'Latitude: ${position.latitude}',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                  ),
+                ),
+                SizedBox(height: 8.0),
+                Text(
+                  'Longitude: ${position.longitude}',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                  ),
+                ),
+                SizedBox(height: 16.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ElevatedButton(
+                      child: Text(
+                        'Fermer',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        primary: accentCanvasColor,
+                        onPrimary: Colors.white,
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+
+  void _getCurrentLocation() async {
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+
+    _showLocationPopup(position);
+
+    print('Latitude: ${position.latitude}, Longitude: ${position.longitude}');
+  }
+
   @override
   Widget build(BuildContext context) {
     List<Releve> favorisFirst = _buildFavorisFirstList();
-    //if (releves == []) {
-    //   return Scaffold();
-    // }else{
 
     return Scaffold(
       appBar: AppBar(
@@ -223,7 +297,7 @@ class _PageAccueilState extends State<PageAccueil> {
                   color: Colors.white,
                   fontSize: 20.0,
                 ),
-                textAlign: TextAlign.left,
+                textAlign:TextAlign.left,
               ),
             ),
           ],
@@ -269,11 +343,10 @@ class _PageAccueilState extends State<PageAccueil> {
                 bool isFavori = favoris.contains(releve.station);
 
                 return GestureDetector(
-                  onTap: () => _navigateToPageLocalisation(
-                      releve.station, releves),
+                  onTap: () => _navigateToPageLocalisation(releve.station),
                   child: Container(
-                    margin:
-                    EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                    margin: EdgeInsets.symmetric(
+                        horizontal: 10.0, vertical: 5.0),
                     padding: EdgeInsets.all(10.0),
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -338,6 +411,12 @@ class _PageAccueilState extends State<PageAccueil> {
                             color: isFavori ? Colors.yellow : Colors.grey,
                           ),
                         ),
+                        IconButton(
+                          onPressed: () {
+                            _showPriceModificationPopup();
+                          },
+                          icon: Icon(Icons.edit),
+                        ),
                       ],
                     ),
                   ),
@@ -392,7 +471,7 @@ class _PageAccueilState extends State<PageAccueil> {
                           spreadRadius: 2,
                           blurRadius: 5,
                           offset: Offset(0, 3),
-                        )
+                        ),
                       ],
                     ),
                     child: Row(
@@ -418,6 +497,11 @@ class _PageAccueilState extends State<PageAccueil> {
             ],
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _getCurrentLocation,
+        child: Icon(Icons.my_location),
+        backgroundColor: accentCanvasColor,
       ),
     );
   }
