@@ -15,6 +15,7 @@ class PageAccueil extends StatefulWidget {
 class _PageAccueilState extends State<PageAccueil> {
   ScrollController _scrollController = ScrollController();
   List<Releve> releves = [];
+
   Set<Station> favoris = Set<Station>();
   bool isLoading = false;
   bool reachedEnd = false;
@@ -77,10 +78,10 @@ class _PageAccueilState extends State<PageAccueil> {
     });
   }
 
-  void _navigateToPageLocalisation() {
+  void _navigateToPageLocalisation(station) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => PagesLocalisation()),
+      MaterialPageRoute(builder: (context) => PagesLocalisation(stations: station)),
     );
   }
 
