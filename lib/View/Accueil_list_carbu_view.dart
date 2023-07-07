@@ -399,6 +399,30 @@ class _PageAccueilState extends State<PageAccueil> {
                                 ),
                                 textAlign: TextAlign.left,
                               ),
+                              SizedBox(height: 8.0),
+                              Text(
+                                '${releve.prixCarburant.toStringAsFixed(2)} €',
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                              SizedBox(height: 8.0),
+                              Text(
+                                "Date de dernier relever :",
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                              SizedBox(height: 8.0),
+                              Text(
+                                releve.dateHeure.toString(),
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
                             ],
                           ),
                         ),
