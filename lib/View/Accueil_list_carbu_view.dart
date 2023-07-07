@@ -401,6 +401,14 @@ class _PageAccueilState extends State<PageAccueil> {
                               ),
                               SizedBox(height: 8.0),
                               Text(
+                                releve.carburant.nom,
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                              SizedBox(height: 8.0),
+                              Text(
                                 '${releve.prixCarburant.toStringAsFixed(2)} €',
                                 style: TextStyle(
                                   fontSize: 16.0,
