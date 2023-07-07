@@ -78,10 +78,10 @@ class _PageAccueilState extends State<PageAccueil> {
     });
   }
 
-  void _navigateToPageLocalisation(station) {
+  void _navigateToPageLocalisation(station, releves) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => PagesLocalisation(stations: station)),
+      MaterialPageRoute(builder: (context) => PagesLocalisation(stations: station, releves: releves,)),
     );
   }
 
@@ -230,6 +230,7 @@ void _showPriceModificationPopup() {
           ],
         ),
       ),
+
       body: ListView(
         children: [
           Container(
@@ -248,8 +249,7 @@ void _showPriceModificationPopup() {
                     value: value,
                     child: Text(
                       value,
-                      style: TextStyle(color: Color(0xFF001931)),
-                    ),
+                      style: TextStyle(color: Color(0xFF001931)),       ),
                   );
                 }).toList(),
                 onChanged: (String? newValue) {
@@ -336,14 +336,46 @@ void _showPriceModificationPopup() {
                             isFavori ? Icons.star : Icons.star_border,
                             color: isFavori ? Colors.yellow : Colors.grey,
                           ),
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            _showPriceModificationPopup();
-                          },
-                          icon: Icon(Icons.edit),
-                        ),
-                      ],
+
+                          SizedBox(height: 8.0),
+                          Text(
+                            '${releve.prixCarburant.toStringAsFixed(2)} €',
+                            style: TextStyle(
+                              fontSize: 16.0,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                          Text(
+                            'Date dernier relevé : ',
+                            style: TextStyle(
+                              fontSize: 16.0,
+                            ),
+                          ),
+                          SizedBox(height: 8.0),
+                          Text(
+                            releve.dateHeure.toString(),
+                            style: TextStyle(
+                              fontSize: 16.0,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        _toggleFavori(releve.station);
+                      },
+                      icon: Icon(
+                        isFavori ? Icons.star : Icons.star_border,
+                        color: isFavori ? Colors.yellow : Colors.grey,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        _showPriceModificationPopup();
+                      },
+                      icon: Icon(Icons.edit),
                     ),
                   ),
                 );
