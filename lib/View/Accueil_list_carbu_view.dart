@@ -270,7 +270,7 @@ void _showPriceModificationPopup() {
                 bool isFavori = favoris.contains(releve.station);
 
                 return GestureDetector(
-                  onTap: _navigateToPageLocalisation,
+                  onTap:()=> _navigateToPageLocalisation(releve.station),
                   child: Container(
                     margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
                     padding: EdgeInsets.all(10.0),
