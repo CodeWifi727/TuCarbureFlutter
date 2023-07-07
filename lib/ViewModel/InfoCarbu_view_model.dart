@@ -5,7 +5,7 @@ import 'package:http/io_client.dart' as http_io;
 
 class ApiService {
 
-  static const String apiUrl = 'https://192.168.1.21:7033';
+  static const String apiUrl = 'https://192.168.1.20:7033';
 
 
   Future<List<Releve>> fetchReleves() async {

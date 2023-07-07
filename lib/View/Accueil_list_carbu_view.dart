@@ -38,7 +38,7 @@ class _PageAccueilState extends State<PageAccueil> {
 
   void _loadMoreItems() {
     if (_scrollController.position.pixels ==
-            _scrollController.position.maxScrollExtent &&
+        _scrollController.position.maxScrollExtent &&
         !isLoading &&
         !reachedEnd) {
       // Utilisez le délai pour éviter les appels redondants
@@ -114,17 +114,16 @@ class _PageAccueilState extends State<PageAccueil> {
     return favorisFirst;
   }
 
-List<String> _getUniqueFuelTypes() {
-  Set<String> uniqueFuelTypes = Set<String>();
-  for (Releve releve in releves) {
-    uniqueFuelTypes.add(releve.carburant.nom);
+  List<String> _getUniqueFuelTypes() {
+    Set<String> uniqueFuelTypes = Set<String>();
+    for (Releve releve in releves) {
+      uniqueFuelTypes.add(releve.carburant.nom);
+    }
+    uniqueFuelTypes.add("tous");
+    return uniqueFuelTypes.toList();
   }
-  uniqueFuelTypes.add("tous");
-  return uniqueFuelTypes.toList();
-}
 
-
-void _showPriceModificationPopup() {
+  void _showPriceModificationPopup() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -230,7 +229,6 @@ void _showPriceModificationPopup() {
           ],
         ),
       ),
-
       body: ListView(
         children: [
           Container(
@@ -249,7 +247,8 @@ void _showPriceModificationPopup() {
                     value: value,
                     child: Text(
                       value,
-                      style: TextStyle(color: Color(0xFF001931)),       ),
+                      style: TextStyle(color: Color(0xFF001931)),
+                    ),
                   );
                 }).toList(),
                 onChanged: (String? newValue) {
@@ -263,16 +262,18 @@ void _showPriceModificationPopup() {
           ListView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
-            itemCount: favorisFirst.length+ 1,
+            itemCount: favorisFirst.length + 1,
             itemBuilder: (context, index) {
               if (index < favorisFirst.length) {
                 Releve releve = favorisFirst[index];
                 bool isFavori = favoris.contains(releve.station);
 
                 return GestureDetector(
-                  onTap:()=> _navigateToPageLocalisation(releve.station),
+                  onTap: () => _navigateToPageLocalisation(
+                      releve.station, releves),
                   child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                    margin:
+                    EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
                     padding: EdgeInsets.all(10.0),
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -336,46 +337,8 @@ void _showPriceModificationPopup() {
                             isFavori ? Icons.star : Icons.star_border,
                             color: isFavori ? Colors.yellow : Colors.grey,
                           ),
-
-                          SizedBox(height: 8.0),
-                          Text(
-                            '${releve.prixCarburant.toStringAsFixed(2)} €',
-                            style: TextStyle(
-                              fontSize: 16.0,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                          Text(
-                            'Date dernier relevé : ',
-                            style: TextStyle(
-                              fontSize: 16.0,
-                            ),
-                          ),
-                          SizedBox(height: 8.0),
-                          Text(
-                            releve.dateHeure.toString(),
-                            style: TextStyle(
-                              fontSize: 16.0,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                        ],
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        _toggleFavori(releve.station);
-                      },
-                      icon: Icon(
-                        isFavori ? Icons.star : Icons.star_border,
-                        color: isFavori ? Colors.yellow : Colors.grey,
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        _showPriceModificationPopup();
-                      },
-                      icon: Icon(Icons.edit),
+                        ),
+                      ],
                     ),
                   ),
                 );
@@ -429,7 +392,8 @@ void _showPriceModificationPopup() {
                           spreadRadius: 2,
                           blurRadius: 5,
                           offset: Offset(0, 3),
-                    )],
+                        )
+                      ],
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -456,6 +420,5 @@ void _showPriceModificationPopup() {
         ),
       ),
     );
-    }
-  //}
+  }
 }
