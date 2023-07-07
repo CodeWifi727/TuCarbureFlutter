@@ -49,6 +49,7 @@ class PagesLocalisation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String googleMapsUrl = 'https://www.google.com/maps/search/?api=1&query=${stations.longitude}%2C${stations.latitude}';
+    List<Releve> releveStation = releves.where((i) => i.idStation == stations.idStationsService).toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -199,9 +200,9 @@ class PagesLocalisation extends StatelessWidget {
             child: Card(
               child: ListView.builder(
                 primary: false,
-                itemCount: releves.length,
+                itemCount: releveStation.length,
                 itemBuilder: (context, index) {
-                  final releve = releves[index];
+                  final releve = releveStation[index];
                     return Material(
                       color: Colors.white,
                       child: Container(
